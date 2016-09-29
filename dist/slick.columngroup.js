@@ -57,14 +57,13 @@
         }
 
         function getGroupedColumnsTemplate(columnGroups) {
-            var slickColumns = "", borderWidth=2;
+            var slickColumns = "";
             $.each(columnGroups, function(name , group) {
                 var width = group.reduce(function(width, column) {
                     return width + column.width;
                 }, 0);
                 var displayName = (name === "-") ? " " : name;
-                slickColumns += '<div class="ui-state-default slick-header-column" data-group-name="' + name + '"style="width:' + (width-borderWidth) + 'px"> <div class="slick-column-name">' + displayName + '</div></div>';
-                borderWidth = 1;
+                slickColumns += '<div class="ui-state-default slick-header-column" data-group-name="' + name + '"style="width:' + (width) + 'px"> <div class="slick-column-name">' + displayName + '</div></div>';
             });
             return slickColumns;
         }
@@ -78,7 +77,7 @@
         function setGroupIndex(columns) {
             var groupNames = Object.keys(getGroupedColumns(columns));
             columns.forEach(function(column) {
-                column._groupIndex = groupNames.indexOf(column.groupName);
+                column._groupIndex = groupNames.indexOf(column.groupName || "-");
                 column._groupIndex = column._groupIndex === -1 ? groupNames.length : column._groupIndex;
             });
         }
@@ -96,7 +95,7 @@
         }
 
         function onColumnsResized() {
-            var columns = grid.getColumns(), borderWidth=2;
+            var columns = grid.getColumns();
 
             if (!isColumnGroupEnabled) {
                 self.onColumnsResized.notify(columns);
@@ -107,8 +106,7 @@
                 var width = group.reduce(function(width, column) {
                     return width + column.width;
                 }, 0);
-                $groupHeaderColumns.find("[data-group-name='" + name + "']").css("width", width-borderWidth);
-                borderWidth = 1;
+                $groupHeaderColumns.find("[data-group-name='" + name + "']").css("width", width);
             });
 
             self.onColumnsResized.notify(columns);
@@ -168,5 +166,4 @@
             removeColumnGrouping: removeColumnGrouping
         };
     }
-
 }(jQuery));
