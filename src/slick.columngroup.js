@@ -122,7 +122,7 @@
                 return;
             }
 
-            var $columns = $(".slick-group-header-columns .slick-header-column");
+            var $columns = $container.find(".slick-group-header-columns .slick-header-column");
             var columnGroups = getGroupedColumns(columns);
             $columns.each(function(index, column) {
                 var groupedColumns = columnGroups[$(column).data("group-name")];
