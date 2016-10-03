@@ -101,7 +101,8 @@
             var groupNames = Object.keys(getGroupedColumns(columns));
 			
             columns.forEach(function(column) {
-                var index = groupNames.indexOf(column.groupName || "-");
+				var name = (column.groupName || "-").replace(/'/g, '');
+                var index = groupNames.indexOf(name);
                 column._groupIndex = index === -1 ? groupNames.length : index;
             });
         }
@@ -141,6 +142,7 @@
                 var width = group.reduce(function(width, column) {
                     return width + column.width;
                 }, 0);
+
                 $groupHeaderColumns.find("[data-group-name='" + name + "']").css("width", width);
             });
 		}
@@ -178,8 +180,10 @@
             var groupedColumns = {};
             columns.forEach(function(column) {
                 var groupName = column.groupName || "-";
-                groupedColumns[groupName] = groupedColumns[groupName] || [];
-                groupedColumns[groupName].push(column);
+				var escaped = groupName.replace(/'/g, '');
+				
+                groupedColumns[escaped] = groupedColumns[escaped] || [];
+                groupedColumns[escaped].push(column);
             });
             return groupedColumns;
         }
