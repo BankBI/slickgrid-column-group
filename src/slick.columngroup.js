@@ -46,6 +46,7 @@
             var columnGroups = getGroupedColumns(columns);
             setGroupIndex(columns);
             setColumnIndex(columns);
+			setColumnIndexClasses(columns);
 
             $groupHeaderColumns.append(getGroupedColumnsTemplate(columnGroups));
             $container.find(".slick-header").prepend($groupHeaderColumns);
@@ -63,7 +64,7 @@
                     return width + column.width;
                 }, 0);
                 var displayName = (name === "-") ? " " : name;
-                slickColumns += '<div class="ui-state-default slick-header-column" data-group-name="' + name + '"style="width:' + (width) + 'px"> <div class="slick-column-name">' + displayName + '</div></div>';
+                slickColumns += '<div class="ui-state-default slick-header-column first-in-group" data-group-name="' + name + '"style="width:' + (width) + 'px"> <div class="slick-column-name">' + displayName + '</div></div>';
             });
             return slickColumns;
         }
@@ -73,12 +74,35 @@
                 column._index = index;
             });
         }
+		
+		function setColumnIndexClasses(columns) {
+			var usedNames = [];
+			var fistInGroupClassName = ' first-in-group ';
+			
+            columns.forEach(function(column, index) {
+				var cssClass = column.cssClass || '';
+				
+				if(usedNames.indexOf(column.groupName) < 0) {
+					if(cssClass.indexOf(fistInGroupClassName) < 0) {
+						cssClass += fistInGroupClassName;
+					}
+					usedNames.push(column.groupName);
+				}
+				else {
+					cssClass = cssClass.replace(/ first-in-group /g, '');
+				}
+				
+				column.headerCssClass = cssClass;
+				column.cssClass = cssClass;
+            });
+        }
 
         function setGroupIndex(columns) {
             var groupNames = Object.keys(getGroupedColumns(columns));
+			
             columns.forEach(function(column) {
-                column._groupIndex = groupNames.indexOf(column.groupName || "-");
-                column._groupIndex = column._groupIndex === -1 ? groupNames.length : column._groupIndex;
+                var index = groupNames.indexOf(column.groupName || "-");
+                column._groupIndex = index === -1 ? groupNames.length : index;
             });
         }
 
@@ -102,21 +126,30 @@
                 return;
             }
 
-            $.each(getGroupedColumns(columns), function(name, group) {
+            resizeColumnGroups();
+            self.onColumnsResized.notify(columns);
+        }
+	
+		function resizeColumnGroups() {
+			if (!isColumnGroupEnabled) {
+                return;
+            }
+			
+			var columns = grid.getColumns();
+			
+			$.each(getGroupedColumns(columns), function(name, group) {
                 var width = group.reduce(function(width, column) {
                     return width + column.width;
                 }, 0);
                 $groupHeaderColumns.find("[data-group-name='" + name + "']").css("width", width);
             });
-
-            self.onColumnsResized.notify(columns);
-        }
-
+		}
 
         function onColumnsReordered() {
             var columns = grid.getColumns();
             setColumnIndex(columns);
-
+			setColumnIndexClasses(columns);
+			
             if (!isColumnGroupEnabled) {
                 self.onColumnsReordered.notify(columns);
                 return;
@@ -133,6 +166,7 @@
             columns.sort(groupCompare);
             grid.setColumns(columns);
             setColumnIndex(columns);
+			setColumnIndexClasses(columns);
             self.onColumnsReordered.notify(columns);
         }
 
@@ -162,6 +196,7 @@
             destroy: destroy,
             onColumnsReordered: this.onColumnsReordered,
             onColumnsResized: this.onColumnsResized,
+			triggerColumnResize: resizeColumnGroups,
             enableColumnGrouping: enableColumnGrouping,
             removeColumnGrouping: removeColumnGrouping
         };
