@@ -135,7 +135,7 @@
 			if (!isColumnGroupEnabled) {
                 return;
             }
-			
+			var totalWidth = 0;
 			var columns = grid.getColumns();
 			
 			$.each(getGroupedColumns(columns), function(name, group) {
@@ -144,7 +144,10 @@
                 }, 0);
 
                 $groupHeaderColumns.find("[data-group-name='" + name + "']").css("width", width);
+				totalWidth += width;
             });
+			var leftOffset = Math.abs(parseInt($groupHeaderColumns.css("left"), 10));
+			$groupHeaderColumns.css("width", totalWidth + leftOffset);
 		}
 
         function onColumnsReordered() {
