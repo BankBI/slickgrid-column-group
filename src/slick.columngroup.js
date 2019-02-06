@@ -49,7 +49,7 @@
 			setColumnIndexClasses(columns);
 
             $groupHeaderColumns.append(getGroupedColumnsTemplate(columnGroups));
-            $container.find(".slick-header").prepend($groupHeaderColumns);
+            $container.find(".slick-header:visible").prepend($groupHeaderColumns);
 
             setupGroupColumnReorder();
             columns.sort(groupCompare);
