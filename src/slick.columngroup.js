@@ -5,8 +5,8 @@
         }
     });
 
-    function ColumnGroup() {
-        var grid, $container, $groupHeaderColumns, self = this,
+    function ColumnGroup(frozenColumn) {
+        var grid, $container, $groupHeaderColumnsL, $groupHeaderColumnsR, self = this,
             isColumnGroupEnabled = false;
         var handler = new Slick.EventHandler();
 
@@ -30,14 +30,20 @@
                 return;
             }
             isColumnGroupEnabled = false;
-            $groupHeaderColumns.remove();
+            $groupHeaderColumnsL.remove();
+            $groupHeaderColumnsR.remove();
             grid.resizeCanvas();
         }
 
         function setGroupedColumns() {
             var headerColumns = $container.find(".slick-header-columns");
-            $groupHeaderColumns = $('<div class="slick-group-header-columns ui-state-default"> </div>');
-            $groupHeaderColumns.css({
+            $groupHeaderColumnsL = $('<div class="slick-group-header-columns ui-state-default"> </div>');
+            $groupHeaderColumnsR = $('<div class="slick-group-header-columns ui-state-default"> </div>');
+            $groupHeaderColumnsL.css({
+                width: headerColumns.width() + "px",
+                left: headerColumns.position().left + "px"
+            });
+            $groupHeaderColumnsR.css({
                 width: headerColumns.width() + "px",
                 left: headerColumns.position().left + "px"
             });
@@ -48,23 +54,51 @@
             setColumnIndex(columns);
 			setColumnIndexClasses(columns);
 
-            $groupHeaderColumns.append(getGroupedColumnsTemplate(columnGroups));
-            $container.find(".slick-header:visible").prepend($groupHeaderColumns);
+            $groupHeaderColumnsL.append(getGroupedColumnsTemplate(columnGroups, 'L', frozenColumn));
+            $groupHeaderColumnsR.append(getGroupedColumnsTemplate(columnGroups, 'R', frozenColumn));
+            $container.find(".slick-header.slick-header-right:visible").prepend($groupHeaderColumnsR);
+            $container.find(".slick-header.slick-header-left:visible").prepend($groupHeaderColumnsL);
 
             setupGroupColumnReorder();
             columns.sort(groupCompare);
             grid.setColumns(columns);
+
+            $groupHeaderColumnsL.css('height', 'auto');
+            $groupHeaderColumnsR.css('height', 'auto');
+
+            let colGroupHeight = $groupHeaderColumnsL.height();
+            if ($groupHeaderColumnsR.height() > colGroupHeight) {
+                colGroupHeight = $groupHeaderColumnsR.height();
+            }
+
+            $groupHeaderColumnsL.height(colGroupHeight);
+            $groupHeaderColumnsR.height(colGroupHeight);
+
             grid.resizeCanvas();
         }
 
-        function getGroupedColumnsTemplate(columnGroups) {
+        function getGroupedColumnsTemplate(columnGroups, side, index) {
             var slickColumns = "";
-            $.each(columnGroups, function(name , group) {
-                var width = group.reduce(function(width, column) {
-                    return width + column.width;
-                }, 0);
-                var displayName = (name === "-") ? " " : name;
-                slickColumns += '<div class="ui-state-default slick-header-column first-in-group" data-group-name="' + name + '"style="width:' + (width) + 'px"> <div class="slick-column-name">' + displayName + '</div></div>';
+            $.each(columnGroups, function (name, group) {
+                var addColumnGroup = true;
+
+                if (index >= 0) {
+                    for (var i = 0; i < group.length; i++) {
+                        if (side === 'L' && group[i]._index > index || side === 'R' && group[i]._index <= index) {
+                            addColumnGroup = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if (addColumnGroup) {
+                    var width = group.reduce(function (width, column) {
+                        return width + column.width;
+                    }, 0);
+                    var displayName = (name === "-") ? " " : name;
+                    slickColumns += '<div class="ui-state-default slick-header-column first-in-group" data-group-name="' + name + '"style="width:' + (width) + 'px"> <div class="slick-column-name">' + displayName + '</div></div>';
+                }
+
             });
             return slickColumns;
         }
@@ -108,7 +142,16 @@
         }
 
         function setupGroupColumnReorder() {
-            $groupHeaderColumns.sortable({
+            $groupHeaderColumnsL.sortable({
+                containment: "parent",
+                distance: 3,
+                axis: "x",
+                cursor: "default",
+                tolerance: "intersection",
+                helper: "clone",
+                update: onColumnsReordered
+            });
+            $groupHeaderColumnsR.sortable({
                 containment: "parent",
                 distance: 3,
                 axis: "x",
@@ -143,11 +186,14 @@
                     return width + column.width;
                 }, 0);
 
-                $groupHeaderColumns.find("[data-group-name='" + name + "']").css("width", width);
+                $groupHeaderColumnsL.find("[data-group-name='" + name + "']").css("width", width);
+                $groupHeaderColumnsR.find("[data-group-name='" + name + "']").css("width", width);
 				totalWidth += width;
             });
-			var leftOffset = Math.abs(parseInt($groupHeaderColumns.css("left"), 10));
-			$groupHeaderColumns.css("width", totalWidth + leftOffset);
+            var leftOffset = Math.abs(parseInt($groupHeaderColumnsL.css("left"), 10));
+            var leftOffset = Math.abs(parseInt($groupHeaderColumnsR.css("left"), 10));
+            $groupHeaderColumnsL.css("width", totalWidth + leftOffset);
+            $groupHeaderColumnsR.css("width", totalWidth + leftOffset);
 		}
 
         function onColumnsReordered() {
