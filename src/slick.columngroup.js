@@ -77,6 +77,9 @@
             grid.resizeCanvas();
         }
 
+
+
+
         function getGroupedColumnsTemplate(columnGroups, side, index) {
             var slickColumns = "";
             $.each(columnGroups, function (name, group) {
@@ -173,9 +176,55 @@
             resizeColumnGroups();
             self.onColumnsResized.notify(columns);
         }
+
+        function fixHeaderHeight() {
+
+            const $paneHeaderL = $(".slick-pane.slick-pane-header.slick-pane-left");
+            const $paneHeaderR = $(".slick-pane.slick-pane-header.slick-pane-right");
+            const $paneTopL = $(".slick-pane.slick-pane-top.slick-pane-left");
+            const $paneTopR = $(".slick-pane.slick-pane-top.slick-pane-right");
+
+            $paneHeaderL.css('height', 'auto');
+            $paneHeaderR.css('height', 'auto');
+
+            let headerHeight = $paneHeaderL.height();
+
+            if (frozenColumn > -1 && $paneHeaderR.height() > headerHeight) {
+                headerHeight = $paneHeaderR.height();
+            }
+
+            $paneHeaderL.css('height', headerHeight);
+            $paneHeaderR.css('height', headerHeight);
+
+            var hhh = $(grid.getTopPanel()).height();
+
+            $paneTopL.css({
+                'top': headerHeight, 'height': hhh
+            });
+
+            if (frozenColumn > -1) {
+                $paneTopR.css({
+                    'top': headerHeight, 'height': hhh
+                });
+            }
+
+            const $columnRowL = $paneHeaderL.find('.slick-header-columns');
+            const $columnRowR = $paneHeaderR.find('.slick-header-columns');
+
+            $columnRowL.css('height', 'auto');
+            $columnRowR.css('height', 'auto');
+            let columnRowHeight = $columnRowL.height();
+
+            if (frozenColumn > -1 && $columnRowR.height() > columnRowHeight) {
+                columnRowHeight = $columnRowR.height();
+            }
+
+            $columnRowL.css('height', columnRowHeight);
+            $columnRowR.css('height', columnRowHeight);
+        }
 	
-		function resizeColumnGroups() {
-			if (!isColumnGroupEnabled) {
+        function resizeColumnGroups() {
+            if (!isColumnGroupEnabled) {
                 return;
             }
 			var totalWidth = 0;
@@ -194,6 +243,8 @@
             var leftOffset = Math.abs(parseInt($groupHeaderColumnsR.css("left"), 10));
             $groupHeaderColumnsL.css("width", totalWidth + leftOffset);
             $groupHeaderColumnsR.css("width", totalWidth + leftOffset);
+
+            fixHeaderHeight();
 		}
 
         function onColumnsReordered() {
