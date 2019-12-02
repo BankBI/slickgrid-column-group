@@ -66,7 +66,7 @@
             $groupHeaderColumnsL.css('height', 'auto');
             $groupHeaderColumnsR.css('height', 'auto');
 
-            let colGroupHeight = $groupHeaderColumnsL.height();
+            var colGroupHeight = $groupHeaderColumnsL.height();
             if ($groupHeaderColumnsR.height() > colGroupHeight) {
                 colGroupHeight = $groupHeaderColumnsR.height();
             }
@@ -187,7 +187,7 @@
             $paneHeaderL.css('height', 'auto');
             $paneHeaderR.css('height', 'auto');
 
-            let headerHeight = $paneHeaderL.height();
+            var headerHeight = $paneHeaderL.height();
 
             if (frozenColumn > -1 && $paneHeaderR.height() > headerHeight) {
                 headerHeight = $paneHeaderR.height();
@@ -213,7 +213,7 @@
 
             $columnRowL.css('height', 'auto');
             $columnRowR.css('height', 'auto');
-            let columnRowHeight = $columnRowL.height();
+            var columnRowHeight = $columnRowL.height();
 
             if (frozenColumn > -1 && $columnRowR.height() > columnRowHeight) {
                 columnRowHeight = $columnRowR.height();
