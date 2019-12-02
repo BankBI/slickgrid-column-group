@@ -66,7 +66,7 @@
             $groupHeaderColumnsL.css('height', 'auto');
             $groupHeaderColumnsR.css('height', 'auto');
 
-            let colGroupHeight = $groupHeaderColumnsL.height();
+            var colGroupHeight = $groupHeaderColumnsL.height();
             if ($groupHeaderColumnsR.height() > colGroupHeight) {
                 colGroupHeight = $groupHeaderColumnsR.height();
             }
@@ -76,6 +76,9 @@
 
             grid.resizeCanvas();
         }
+
+
+
 
         function getGroupedColumnsTemplate(columnGroups, side, index) {
             var slickColumns = "";
@@ -173,9 +176,55 @@
             resizeColumnGroups();
             self.onColumnsResized.notify(columns);
         }
+
+        function fixHeaderHeight() {
+
+            var $paneHeaderL = $(".slick-pane.slick-pane-header.slick-pane-left");
+            var $paneHeaderR = $(".slick-pane.slick-pane-header.slick-pane-right");
+            var $paneTopL = $(".slick-pane.slick-pane-top.slick-pane-left");
+            var $paneTopR = $(".slick-pane.slick-pane-top.slick-pane-right");
+
+            $paneHeaderL.css('height', 'auto');
+            $paneHeaderR.css('height', 'auto');
+
+            var headerHeight = $paneHeaderL.height();
+
+            if (frozenColumn > -1 && $paneHeaderR.height() > headerHeight) {
+                headerHeight = $paneHeaderR.height();
+            }
+
+            $paneHeaderL.css('height', headerHeight);
+            $paneHeaderR.css('height', headerHeight);
+
+            var hhh = $(grid.getTopPanel()).height();
+
+            $paneTopL.css({
+                'top': headerHeight, 'height': hhh
+            });
+
+            if (frozenColumn > -1) {
+                $paneTopR.css({
+                    'top': headerHeight, 'height': hhh
+                });
+            }
+
+            var $columnRowL = $paneHeaderL.find('.slick-header-columns');
+            var $columnRowR = $paneHeaderR.find('.slick-header-columns');
+
+            $columnRowL.css('height', 'auto');
+            $columnRowR.css('height', 'auto');
+            var columnRowHeight = $columnRowL.height();
+
+            if (frozenColumn > -1 && $columnRowR.height() > columnRowHeight) {
+                columnRowHeight = $columnRowR.height();
+            }
+
+            $columnRowL.css('height', columnRowHeight);
+            $columnRowR.css('height', columnRowHeight);
+        }
 	
-		function resizeColumnGroups() {
-			if (!isColumnGroupEnabled) {
+        function resizeColumnGroups() {
+            if (!isColumnGroupEnabled) {
                 return;
             }
 			var totalWidth = 0;
@@ -194,6 +243,8 @@
             var leftOffset = Math.abs(parseInt($groupHeaderColumnsR.css("left"), 10));
             $groupHeaderColumnsL.css("width", totalWidth + leftOffset);
             $groupHeaderColumnsR.css("width", totalWidth + leftOffset);
+
+            fixHeaderHeight();
 		}
 
         function onColumnsReordered() {
