@@ -66,7 +66,7 @@
             $groupHeaderColumnsL.css('height', 'auto');
             $groupHeaderColumnsR.css('height', 'auto');
 
-            let colGroupHeight = $groupHeaderColumnsL.height();
+            var colGroupHeight = $groupHeaderColumnsL.height();
             if ($groupHeaderColumnsR.height() > colGroupHeight) {
                 colGroupHeight = $groupHeaderColumnsR.height();
             }
@@ -179,15 +179,15 @@
 
         function fixHeaderHeight() {
 
-            const $paneHeaderL = $(".slick-pane.slick-pane-header.slick-pane-left");
-            const $paneHeaderR = $(".slick-pane.slick-pane-header.slick-pane-right");
-            const $paneTopL = $(".slick-pane.slick-pane-top.slick-pane-left");
-            const $paneTopR = $(".slick-pane.slick-pane-top.slick-pane-right");
+            var $paneHeaderL = $(".slick-pane.slick-pane-header.slick-pane-left");
+            var $paneHeaderR = $(".slick-pane.slick-pane-header.slick-pane-right");
+            var $paneTopL = $(".slick-pane.slick-pane-top.slick-pane-left");
+            var $paneTopR = $(".slick-pane.slick-pane-top.slick-pane-right");
 
             $paneHeaderL.css('height', 'auto');
             $paneHeaderR.css('height', 'auto');
 
-            let headerHeight = $paneHeaderL.height();
+            var headerHeight = $paneHeaderL.height();
 
             if (frozenColumn > -1 && $paneHeaderR.height() > headerHeight) {
                 headerHeight = $paneHeaderR.height();
@@ -208,12 +208,12 @@
                 });
             }
 
-            const $columnRowL = $paneHeaderL.find('.slick-header-columns');
-            const $columnRowR = $paneHeaderR.find('.slick-header-columns');
+            var $columnRowL = $paneHeaderL.find('.slick-header-columns');
+            var $columnRowR = $paneHeaderR.find('.slick-header-columns');
 
             $columnRowL.css('height', 'auto');
             $columnRowR.css('height', 'auto');
-            let columnRowHeight = $columnRowL.height();
+            var columnRowHeight = $columnRowL.height();
 
             if (frozenColumn > -1 && $columnRowR.height() > columnRowHeight) {
                 columnRowHeight = $columnRowR.height();
