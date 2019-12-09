@@ -179,10 +179,10 @@
 
         function fixHeaderHeight() {
 
-            var $paneHeaderL = $(".slick-pane.slick-pane-header.slick-pane-left");
-            var $paneHeaderR = $(".slick-pane.slick-pane-header.slick-pane-right");
-            var $paneTopL = $(".slick-pane.slick-pane-top.slick-pane-left");
-            var $paneTopR = $(".slick-pane.slick-pane-top.slick-pane-right");
+            var $paneHeaderL = $container.find(".slick-pane.slick-pane-header.slick-pane-left");
+            var $paneHeaderR = $container.find(".slick-pane.slick-pane-header.slick-pane-right");
+            var $paneTopL = $container.find(".slick-pane.slick-pane-top.slick-pane-left");
+            var $paneTopR = $container.find(".slick-pane.slick-pane-top.slick-pane-right");
 
             $paneHeaderL.css('height', 'auto');
             $paneHeaderR.css('height', 'auto');
