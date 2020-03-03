@@ -44,7 +44,8 @@
                 left: headerColumns.position().left + "px"
             });
             $groupHeaderColumnsR.css({
-                width: headerColumns.width() + "px",
+			    width: 'auto',
+				position: 'absolute',
                 left: headerColumns.position().left + "px"
             });
 
@@ -75,6 +76,11 @@
             $groupHeaderColumnsR.height(colGroupHeight);
 
             grid.resizeCanvas();
+			
+			 $groupHeaderColumnsR.css({
+                width: headerColumns.width() + "px",
+				position: 'relative'
+            });
         }
 
 
